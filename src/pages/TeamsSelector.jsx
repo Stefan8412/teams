@@ -23,7 +23,7 @@ export default function TeamSelector() {
 
   const generateTeams = () => {
     if (splitPlayers.length !== 4) {
-      alert("Označ 4 hračov,ktorí nemôžu byť spolu.");
+      alert("označ 4 hráčov, ktorí budu rozdelení.");
       return;
     }
     let remainingPlayers = players.filter((p) => !splitPlayers.includes(p));
@@ -36,24 +36,30 @@ export default function TeamSelector() {
     });
   };
 
+  const resetTeams = () => {
+    setPlayers([]);
+    setSplitPlayers([]);
+    setTeams({ teamA: [], teamB: [] });
+  };
+
   return (
     <div className="p-4 space-y-4 max-w-md mx-auto">
       <div className="flex gap-2">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="pridaj hráča"
+          placeholder="meno hráča"
           className="border p-2 rounded w-full"
         />
         <button
           onClick={addPlayer}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          Pridaj
+          Pridaj hráča
         </button>
       </div>
       <p className="text-sm text-gray-500">
-        Označ 4 hračov,ktorí nemôžu byť spolu..
+        označ 4 hráčov, ktorí budú rozdelení
       </p>
       <div className="grid grid-cols-2 gap-2">
         {players.map((player) => (
@@ -76,7 +82,13 @@ export default function TeamSelector() {
         className="w-full bg-green-500 text-white p-2 rounded"
         disabled={splitPlayers.length !== 4}
       >
-        Vytvor tímy
+        Vytvor mužstvá
+      </button>
+      <button
+        onClick={resetTeams}
+        className="w-full bg-red-500 text-white p-2 rounded mt-2"
+      >
+        Zruš
       </button>
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div className="border p-4 rounded bg-gray-100">
