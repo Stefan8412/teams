@@ -6,6 +6,7 @@ export default function TeamSelector() {
   const [splitPlayers, setSplitPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
 
+  // Add a player to the list
   const addPlayer = () => {
     if (name.trim() && !players.includes(name)) {
       setPlayers([...players, name]);
@@ -13,29 +14,45 @@ export default function TeamSelector() {
     }
   };
 
+  // Toggle selection of a player for splitting
   const toggleSplitPlayer = (player) => {
     if (splitPlayers.includes(player)) {
       setSplitPlayers(splitPlayers.filter((p) => p !== player));
-    } else if (splitPlayers.length < 4) {
+    } else if (splitPlayers.length < 2) {
+      // Only allow 2 players to be selected
       setSplitPlayers([...splitPlayers, player]);
     }
   };
 
+  // Generate teams with selected players and the rest randomly assigned
   const generateTeams = () => {
-    if (splitPlayers.length !== 4) {
-      alert("označ 4 hráčov, ktorí budu rozdelení.");
+    // Ensure 2 players are selected for splitting
+    if (splitPlayers.length !== 2) {
+      alert("Označ 2 hráčov, ktorí budú rozdelení.");
       return;
     }
-    let remainingPlayers = players.filter((p) => !splitPlayers.includes(p));
-    let shuffled = remainingPlayers.sort(() => Math.random() - 0.5);
-    let mid = Math.ceil(shuffled.length / 2);
 
+    // Remaining players are those not selected for splitting
+    let remainingPlayers = players.filter((p) => !splitPlayers.includes(p));
+
+    // Shuffle remaining players
+    let shuffled = remainingPlayers.sort(() => Math.random() - 0.5);
+
+    // Now assign the split players to Team A and Team B
+    // Player 1 to Team A, Player 2 to Team B
     setTeams({
-      teamA: [splitPlayers[0], splitPlayers[1], ...shuffled.slice(0, mid)],
-      teamB: [splitPlayers[2], splitPlayers[3], ...shuffled.slice(mid)],
+      teamA: [
+        splitPlayers[0],
+        ...shuffled.slice(0, Math.ceil(shuffled.length / 2)),
+      ],
+      teamB: [
+        splitPlayers[1],
+        ...shuffled.slice(Math.ceil(shuffled.length / 2)),
+      ],
     });
   };
 
+  // Reset the teams and players
   const resetTeams = () => {
     setPlayers([]);
     setSplitPlayers([]);
@@ -48,7 +65,7 @@ export default function TeamSelector() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="meno hráča"
+          placeholder="Meno hráča"
           className="border p-2 rounded w-full"
         />
         <button
@@ -59,7 +76,7 @@ export default function TeamSelector() {
         </button>
       </div>
       <p className="text-sm text-gray-500">
-        označ 4 hráčov, ktorí budú rozdelení
+        Označ 2 hráčov, ktorí budú rozdelení
       </p>
       <div className="grid grid-cols-2 gap-2">
         {players.map((player) => (
@@ -70,7 +87,7 @@ export default function TeamSelector() {
             }`}
             onClick={() => toggleSplitPlayer(player)}
             disabled={
-              splitPlayers.length >= 4 && !splitPlayers.includes(player)
+              splitPlayers.length >= 2 && !splitPlayers.includes(player)
             }
           >
             {player} {splitPlayers.includes(player) ? "(rozdeľ)" : ""}
@@ -80,7 +97,7 @@ export default function TeamSelector() {
       <button
         onClick={generateTeams}
         className="w-full bg-green-500 text-white p-2 rounded"
-        disabled={splitPlayers.length !== 4}
+        disabled={splitPlayers.length !== 2}
       >
         Vytvor mužstvá
       </button>
@@ -93,12 +110,14 @@ export default function TeamSelector() {
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div className="border p-4 rounded bg-gray-100">
           <h2 className="text-xl font-bold">Tím A</h2>
+          <p>Paľo</p>
           {teams.teamA.map((player) => (
             <p key={player}>{player}</p>
           ))}
         </div>
         <div className="border p-4 rounded bg-gray-100">
           <h2 className="text-xl font-bold">Tím B</h2>
+          <p>Jan</p>
           {teams.teamB.map((player) => (
             <p key={player}>{player}</p>
           ))}
