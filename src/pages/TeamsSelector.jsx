@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import PowerModeInput from "power-mode-input";
 
 export default function TeamSelector() {
   const [players, setPlayers] = useState([]);
@@ -13,6 +14,27 @@ export default function TeamSelector() {
       setName("");
     }
   };
+
+  const inputRef = useRef(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      PowerModeInput.make(inputRef.current, {
+        height: 5,
+        tha: [0, 360],
+        g: 0.5,
+        num: 5,
+        radius: 6,
+        circle: true,
+        alpha: [0.75, 0.1],
+        color: "random",
+      });
+    }
+    return () => {
+      if (inputRef.current) {
+        PowerModeInput.destroy();
+      }
+    };
+  }, []);
 
   // Toggle selection of a player for splitting
   const toggleSplitPlayer = (player) => {
@@ -63,11 +85,14 @@ export default function TeamSelector() {
     <div className="p-4 space-y-4 max-w-md mx-auto">
       <div className="flex gap-2">
         <input
+          ref={inputRef}
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Meno hráča"
           className="border p-2 rounded w-full"
+          data-power-mode
         />
+
         <button
           onClick={addPlayer}
           className="bg-blue-500 text-white px-4 py-2 rounded"
